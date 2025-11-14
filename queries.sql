@@ -1,4 +1,3 @@
-
 -- 1 запрос на товары, которые продавались больше всего и в каком количестве
 select productid, sum(quantity) as total_sales
 from sales_sample
@@ -29,7 +28,7 @@ from customers
 
 --5.1 Запрос на извлечение данных о продавце, суммарной выручке с проданных товаров и количестве проведенных сделок, и отсортирована по убыванию выручки
 select concat (empl.first_name, ' ', empl.last_name) as seller, count(sales.sales_person_id) as operations
-       ,sum(sales.quantity * prod.price) as income
+       ,floor(sum(sales.quantity * prod.price)) as income
 from sales
 inner join employees empl on sales.sales_person_id = empl.employee_id 
 inner join products prod on sales.product_id = prod.product_id 
@@ -63,8 +62,8 @@ order by average_income asc;
 --Каждая запись содержит имя и фамилию продавца, день недели и суммарную выручку.
 --Отсортируйте данные по порядковому номеру дня недели и seller
 select concat (empl.first_name, ' ', empl.last_name) as seller
-       ,trim(to_char (sales.sale_date, 'Day')) as day_of_week 
-       ,round(sum(sales.quantity * prod.price)) as total
+       ,trim(to_char (sales.sale_date, 'day')) as day_of_week 
+       ,floor(sum(sales.quantity * prod.price)) as income
 from sales
 inner join employees empl on sales.sales_person_id = empl.employee_id 
 inner join products prod on sales.product_id = prod.product_id
@@ -88,10 +87,10 @@ order by age_category
 
 --6.2 Во втором отчете предоставьте данные по количеству уникальных покупателей и выручке, которую они принесли.
 --Сгруппируйте данные по дате, которая представлена в числовом виде ГОД-МЕСЯЦ. 
-select selling_month, count(distinct customer_id) as total_customers,sum(income) as income
+select selling_month, count(distinct customer_id) as total_customers,floor(sum(income)) as income
 from (select sales.*,
       to_char(date_trunc('month', sales.sale_date), 'yyyy-mm') as selling_month,
-      sales.quantity* prod.price as income
+     (sales.quantity*prod.price) as income
       from sales
       inner join products prod on sales.product_id = prod.product_id)
 group by selling_month
@@ -119,3 +118,4 @@ where sale_date = minsaledate
 and income = 0 
 group by custname, sale_date, salespname, customer_id
 order by customer_id asc
+
