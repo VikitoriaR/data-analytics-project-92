@@ -1,3 +1,4 @@
+
 -- 1 запрос на товары, которые продавались больше всего и в каком количестве
 select productid, sum(quantity) as total_sales
 from sales_sample
@@ -20,6 +21,7 @@ group by salss.productid
 order by amount desc
 limit 10
 
+
 --4 Считаем общее количество покупателей из таблицы customers.
 select count(distinct customer_id) as customers_count
 from customers
@@ -39,7 +41,7 @@ limit 10
 --5.2 Второй отчет содержит информацию о продавцах, чья средняя выручка за сделку меньше средней выручки за сделку по всем продавцам. Таблица отсортирована по выручке по возрастанию.
 with tab as (
    select concat (empl.first_name, ' ', empl.last_name) as seller
-          ,round(avg(sales.quantity * prod.price)) avg_sales
+          ,floor(avg(sales.quantity * prod.price)) avg_sales
           ,sum(sales.quantity * prod.price) as income
     from sales
     inner join employees empl on sales.sales_person_id = empl.employee_id 
@@ -49,7 +51,7 @@ with tab as (
 
 select seller, avg_sales as average_income
 from tab
-where avg_sales < (select round(avg(sales.quantity * prod.price))
+where avg_sales < (select floor(avg(sales.quantity * prod.price))
                         from sales
                         inner join employees empl on sales.sales_person_id = empl.employee_id 
                         inner join products prod on sales.product_id = prod.product_id)
@@ -70,7 +72,6 @@ group by seller, day_of_week, extract (isodow from sales.sale_date)
 order by extract (isodow from sales.sale_date), seller;
 
 
-
 --6.1 Запрос на количество покупателей в разных возрастных группах: 16-25, 26-40 и 40+. Итоговая таблица должна быть отсортирована по возрастным группам.
 with tab as (select *,
 case when age between 16 and 25 then '16-25'
@@ -79,7 +80,7 @@ case when age between 16 and 25 then '16-25'
 end as age_category
 from customers)
 
-select age_category, count(age_category)
+select age_category, count(age_category) as age_count
 from tab
 group by age_category
 order by age_category
@@ -95,6 +96,7 @@ from (select sales.*,
       inner join products prod on sales.product_id = prod.product_id)
 group by selling_month
 order by selling_month asc
+
 
 
 --6.3 Третий отчет следует составить о покупателях, первая покупка которых была в ходе проведения акций (акционные товары отпускали со стоимостью равной 0).
