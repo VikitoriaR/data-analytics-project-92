@@ -54,6 +54,7 @@ WITH tab AS (
     GROUP BY
         seller
 )
+
 SELECT
     tab.seller,
     tab.avg_sales AS average_income
@@ -120,6 +121,7 @@ WITH tab AS (
     FROM
         customers
 )
+
 SELECT
     tab.age_category,
     COUNT(tab.age_category) AS age_count
@@ -165,6 +167,7 @@ WITH tab AS (
         employees AS empl
         ON sales.sales_person_id = empl.employee_id
 )
+
 SELECT
     tab.custname AS customer,
     tab.sale_date,
