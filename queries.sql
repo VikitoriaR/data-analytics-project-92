@@ -1,4 +1,3 @@
-
 -- 1 запрос на товары, которые продавались больше всего и в каком количестве
 select
     productid,
@@ -16,8 +15,6 @@ group by productid
 order by totalquantity desc
 limit 10
 
-
-
 --3 запрос 10 товаров, которые продались на наибольшую сумму
 select
     salss.productid,
@@ -28,13 +25,11 @@ group by salss.productid
 order by amount desc
 limit 10
 
-
 --4 Считаем общее количество покупателей из таблицы customers.
 select count(distinct customer_id) as customers_count
 from customers
 
-
---5.1 Запрос на извлечение данных о продавце, суммарной выручке с проданных товаров и количестве проведенных сделок, и отсортирована по убыванию выручки
+--5.1 Продавец, сделки и прибыот
 select
     concat(empl.first_name, ' ', empl.last_name) as seller,
     count(sales.sales_person_id) as operations,
@@ -46,8 +41,7 @@ group by seller
 order by income desc
 limit 10
 
-
---5.2 Второй отчет содержит информацию о продавцах, чья средняя выручка за сделку меньше средней выручки за сделку по всем продавцам. Таблица отсортирована по выручке по возрастанию.
+--5.2 Продавцы, чья средняя выручка за сделку меньше средней выручки за сделку по всем продавцам. 
 with tab as (
     select
         concat(empl.first_name, ' ', empl.last_name) as seller,
@@ -59,7 +53,6 @@ with tab as (
     group by seller
     order by avg_sales
 )
-
 select
     seller,
     avg_sales as average_income
@@ -73,11 +66,7 @@ where
     )
 order by average_income asc;
 
-
-
---5.3 Третий отчет содержит информацию о выручке по дням недели.
---Каждая запись содержит имя и фамилию продавца, день недели и суммарную выручку.
---Отсортируйте данные по порядковому номеру дня недели и seller
+--5.3 Выручки по дням неделям
 select
     concat(empl.first_name, ' ', empl.last_name) as seller,
     trim(to_char(sales.sale_date, 'day')) as day_of_week,
@@ -88,20 +77,17 @@ inner join products as prod on sales.product_id = prod.product_id
 group by seller, day_of_week, extract(isodow from sales.sale_date)
 order by extract(isodow from sales.sale_date), seller;
 
-
---6.1 Запрос на количество покупателей в разных возрастных группах: 16-25, 26-40 и 40+. Итоговая таблица должна быть отсортирована по возрастным группам.
+--6.1 Покупатели по возрастным группам
 with tab as (select *,
 case when age between 16 and 25 then '16-25'
      when age between 26 and 40 then '26-40'
      when age >40 then '40+'
 end as age_category
 from customers)
-
 select age_category, count(age_category) as age_count
 from tab
 group by age_category
 order by age_category
-
 
 --6.2 Во втором отчете предоставьте данные по количеству уникальных покупателей и выручке, которую они принесли.
 --Сгруппируйте данные по дате, которая представлена в числовом виде ГОД-МЕСЯЦ. 
@@ -111,15 +97,12 @@ case when age between 16 and 25 then '16-25'
      when age >40 then '40+'
 end as age_category
 from customers)
-
 select age_category, count(age_category) as age_count
 from tab
 group by age_category
 order by age_category
 
-
---6.3 Третий отчет следует составить о покупателях, первая покупка которых была в ходе проведения акций (акционные товары отпускали со стоимостью равной 0).
---Итоговая таблица должна быть отсортирована по id покупателя.
+--6.3 Покупатели первая покупка которых пришлась на время проведения
 with tab as (
     select
         sales.*,
@@ -134,7 +117,6 @@ with tab as (
     inner join customers as cust on sales.customer_id = cust.customer_id
     inner join employees as empl on sales.sales_person_id = empl.employee_id
 )
-
 select
     custname as customer,
     sale_date,
