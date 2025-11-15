@@ -1,8 +1,6 @@
 -- Count unique customers
-SELECT
-    COUNT(DISTINCT customer_id) AS customers_count
-FROM
-    customers;
+SELECT COUNT(DISTINCT customer_id) AS customers_count
+FROM customers;
 
 
 -- Sellers, number of operations and income
