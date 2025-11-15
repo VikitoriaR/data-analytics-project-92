@@ -15,7 +15,7 @@ GROUP BY seller
 ORDER BY income DESC
 LIMIT 10;
 
--- Продавцы с выручкой ниже средней
+-- Продавцы, чья средняя выручка меньше средней общей
 WITH tab AS (
     SELECT
         CONCAT(empl.first_name, ' ', empl.last_name) AS seller,
@@ -94,7 +94,7 @@ FROM tab
 GROUP BY age_category
 ORDER BY age_category;
 
--- Покупатели, первая покупка которых пришлась на время проведения акции
+-- Покупатели, чья первая покупка пришлась на период акции
 WITH tab AS (
     SELECT
         sales.*,
@@ -111,14 +111,14 @@ WITH tab AS (
 
 SELECT
     custname AS customer,
-    sale_date,
+    tab.sale_date,
     salespname AS seller
 FROM tab
-WHERE sale_date = minsaledate
+WHERE tab.sale_date = minsaledate
     AND income = 0
 GROUP BY
     custname,
-    sale_date,
+    tab.sale_date,
     salespname,
     customer_id
 ORDER BY customer_id ASC;
