@@ -4,7 +4,6 @@ SELECT
 FROM
     customers;
 
-
 -- Sellers, number of operations and income
 SELECT
     CONCAT(
@@ -137,7 +136,10 @@ ORDER BY
 WITH tab AS (
     SELECT
         sales.*,
-        TO_CHAR(DATE_TRUNC('month', sales.sale_date), 'yyyy-mm') AS selling_month,
+        TO_CHAR(
+            DATE_TRUNC('month', sales.sale_date),
+            'yyyy-mm'
+        ) AS selling_month,
         MIN(sales.sale_date) OVER (
             PARTITION BY sales.customer_id
         ) AS minsaledate,
