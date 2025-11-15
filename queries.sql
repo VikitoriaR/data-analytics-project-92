@@ -6,23 +6,17 @@ FROM
 
 -- Sellers, number of operations and income
 SELECT
-    CONCAT(
-        empl.first_name,
-        ' ',
-        empl.last_name
-    ) AS seller,
+    CONCAT(empl.first_name, ' ', empl.last_name) AS seller,
     COUNT(sales.sales_person_id) AS operations,
-    FLOOR(
-        SUM(sales.quantity * prod.price)
-    ) AS income
+    FLOOR(SUM(sales.quantity * prod.price)) AS income
 FROM
     sales
 INNER JOIN
     employees AS empl
-    ON sales.sales_person_id = empl.employee_id
+        ON sales.sales_person_id = empl.employee_id
 INNER JOIN
     products AS prod
-    ON sales.product_id = prod.product_id
+        ON sales.product_id = prod.product_id
 GROUP BY
     seller
 ORDER BY
