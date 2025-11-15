@@ -1,35 +1,8 @@
--- 1 запрос на товары, которые продавались больше всего и в каком количестве
-select
-    productid,
-    sum(quantity) as total_sales
-from sales_sample
-group by productid
-order by total_sales desc
-
---2 запрос 10 самых продаваемых товаров
-select
-    productid,
-    sum(quantity) as totalquantity
-from sales_sample
-group by productid
-order by totalquantity desc
-limit 10
-
---3 запрос 10 товаров, которые продались на наибольшую сумму
-select
-    salss.productid,
-    floor(sum(salss.quantity * prod.price)) as amount
-from sales_sample as salss
-inner join products as prod on salss.productid = prod.product_id
-group by salss.productid
-order by amount desc
-limit 10
-
---4 Считаем общее количество покупателей из таблицы customers.
+--Считаем общее количество покупателей из таблицы customers.
 select count(distinct customer_id) as customers_count
 from customers
 
---5.1 Продавец, сделки и прибыот
+--Продавец, сделки и прибыот
 select
     concat(empl.first_name, ' ', empl.last_name) as seller,
     count(sales.sales_person_id) as operations,
@@ -41,7 +14,7 @@ group by seller
 order by income desc
 limit 10
 
---5.2 Продавцы, чья средняя выручка за сделку меньше средней выручки за сделку по всем продавцам. 
+--Продавцы, чья средняя выручка за сделку меньше средней выручки за сделку по всем продавцам. 
 with tab as (
     select
         concat(empl.first_name, ' ', empl.last_name) as seller,
@@ -66,7 +39,7 @@ where
     )
 order by average_income asc;
 
---5.3 Выручки по дням неделям
+--Выручки по дням неделям
 select
     concat(empl.first_name, ' ', empl.last_name) as seller,
     trim(to_char(sales.sale_date, 'day')) as day_of_week,
@@ -77,7 +50,7 @@ inner join products as prod on sales.product_id = prod.product_id
 group by seller, day_of_week, extract(isodow from sales.sale_date)
 order by extract(isodow from sales.sale_date), seller;
 
---6.1 Покупатели по возрастным группам
+--Покупатели по возрастным группам
 with tab as (select *,
 case when age between 16 and 25 then '16-25'
      when age between 26 and 40 then '26-40'
@@ -89,7 +62,7 @@ from tab
 group by age_category
 order by age_category
 
---6.2 Количество уникальных покупателей
+--Количество уникальных покупателей
 with tab as (select *,
 case when age between 16 and 25 then '16-25'
      when age between 26 and 40 then '26-40'
@@ -101,7 +74,7 @@ from tab
 group by age_category
 order by age_category
 
---6.3 Покупатели первая покупка которых пришлась на время проведения
+--Покупатели первая покупка которых пришлась на время проведения
 with tab as (
     select
         sales.*,
